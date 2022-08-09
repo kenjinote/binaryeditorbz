@@ -70,7 +70,7 @@ int Run(LPTSTR lpstrCmdLine = NULL, int nCmdShow = SW_SHOWDEFAULT)
       CMainFrame *pMainFrame = pCoreData->GetMainFrame();
       if(pMainFrame!=NULL)
       {
-        pMainFrame->_OnViewSplit(ID_VIEW_SPLIT_H);
+        pMainFrame->_OnViewSplit(options.lastSplitView==0 ? ID_VIEW_SPLIT_H : ID_VIEW_SPLIT_V);
       }
     }
     for(int i=0;i<argc;i++)

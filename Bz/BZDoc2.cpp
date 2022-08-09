@@ -226,7 +226,7 @@ BOOL CBZDoc2::OpenDocument(LPCTSTR lpszPathName, HWND hWnd)
 //  //return CDocument::OnSaveDocument(lpszPathName);
 //}
 
-BOOL CBZDoc2::CloseDocument(HWND hWnd)
+BOOL CBZDoc2::AskSave(HWND hWnd)
 {
   if(m_pSFC && m_pSFC->IsModified())
   {
@@ -238,13 +238,20 @@ BOOL CBZDoc2::CloseDocument(HWND hWnd)
     {
     case IDYES:
       if(!OnFileSave())return FALSE;
-      break;
+      return TRUE;
     case IDNO:
-      break;
+      return TRUE;
     case IDCANCEL:
+    default:
       return FALSE;
     }
   }
+  return TRUE;
+}
+
+BOOL CBZDoc2::CloseDocument(HWND hWnd)
+{
+  if(AskSave(hWnd)==FALSE)return FALSE; //Cancel
   DeleteContents();
   return TRUE;
 }
@@ -253,15 +260,21 @@ BOOL CBZDoc2::OnFileOpen(LPCTSTR lpszPathName, HWND hWnd)
 {
   //CWaitCursor wait;
   BOOL bRet = FALSE;
-  if(!CloseDocument(hWnd))return FALSE;
+  if(AskSave(hWnd)==FALSE)return FALSE; //Cancel
 
   if(lpszPathName==NULL)
   {
     WTL::CFileDialog dlg(TRUE, _T("*"), NULL, OFN_NOVALIDATE
       , _T("‚·‚×‚Ä‚Ìƒtƒ@ƒCƒ‹ (*)\0*\0\0"), hWnd);
-    if(dlg.DoModal() == IDOK)bRet = OpenDocument(dlg.m_szFileName, hWnd);
-    else return FALSE;
-  } else  bRet = OpenDocument(lpszPathName, hWnd);
+    if(dlg.DoModal() == IDOK)
+    {
+      DeleteContents();
+      bRet = OpenDocument(dlg.m_szFileName, hWnd);
+    } else return FALSE;
+  } else {
+    DeleteContents();
+    bRet = OpenDocument(lpszPathName, hWnd);
+  }
 
   if(!bRet)
   {

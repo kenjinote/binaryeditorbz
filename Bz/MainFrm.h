@@ -215,7 +215,7 @@ public:
       WTL::CRect rectFindBox;
       m_mainToolbar.GetItemRect(idxFindBox, rectFindBox);
       m_combo_toolbar.Create(m_mainToolbar, rectFindBox, NULL
-        , WS_CHILD | WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWN, 0, IDT_FINDBOX);
+        , WS_CHILD | WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWN | CBS_AUTOHSCROLL, 0, IDT_FINDBOX);
       m_hWndEditSearchbox = m_combo_toolbar.GetWindow(GW_CHILD);
 
       WTL::CLogFont lf;
@@ -229,6 +229,7 @@ public:
       m_fontSearchCombo = lf.CreateFontIndirect();
 
       m_combo_toolbar.SetFont(m_fontSearchCombo);
+      m_combo_toolbar.LimitText(500);
       //WTL::CEdit editBox = m_combo_toolbar.GetEditCtrl();
       //editBox.ModifyStyle(0, ES_RIGHT);
 

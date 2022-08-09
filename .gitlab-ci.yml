@@ -1,0 +1,25 @@
+.shared_windows_runners:
+  tags:
+    - shared-windows
+    - windows
+    - windows-1809
+
+stages:
+  - build
+
+before_script:
+ - Set-Variable -Name "time" -Value (date -Format "%H:%m")
+ - echo ${time}
+ - echo "started by ${GITLAB_USER_NAME}"
+
+build:
+  extends:
+    - .shared_windows_runners
+  stage: build
+  script:
+    - $env:Path += ';C:\Program Files\CMake\bin;C:\Program Files (x86)\NSIS'
+    - CMD.EXE /C GitlabCI.bat
+    - exit $LASTEXITCODE
+  artifacts:
+    paths:
+      - BzTest.exe

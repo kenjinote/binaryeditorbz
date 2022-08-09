@@ -135,6 +135,14 @@ void CBZView::OnUpdateJump()
   UIEnable(ID_JUMP_END, m_pDoc->GetDocSize()!=0);
 }
 
+void AddStringToSearchBox(WTL::CComboBox* pCombo, LPCTSTR lpFind)
+{
+  int iFind = pCombo->FindStringExact(-1, lpFind);
+  if(iFind!=CB_ERR)pCombo->DeleteString(iFind);
+  pCombo->InsertString(0, lpFind);
+  return;
+}
+
 void CBZView::OnJumpFindnext(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
   WTL::CComboBox* pCombo = &(GetMainFrame()->m_combo_toolbar);
@@ -157,7 +165,7 @@ void CBZView::OnJumpFindnext(UINT uNotifyCode, int nID, CWindow wndCtl)
     pCombo->SetWindowText(_T("? "));
     return;
   }
-  pCombo->AddString(CA2T(sFind));
+  AddStringToSearchBox(pCombo, CA2T(sFind));
   if(c1 == '?' || c1 == '+' || c1 == '>'|| c1 == '<') {
     DWORD dwNew = 0;
     long nResult;
@@ -1497,7 +1505,7 @@ void CBZView::MoveCaretTo(UINT64 dwNewCaret)
 		dwNewCaret = dwTotal;
 	}
 
-  int dy = dwNewCaret/16 - m_dwCaret/16;
+  INT64 dy = dwNewCaret/16 - m_u64V/*m_dwCaret/16*/;
 
   /*WTL::CRect rect;
   UINT64 v64 = GetScrollPosU64V();
@@ -1509,10 +1517,10 @@ void CBZView::MoveCaretTo(UINT64 dwNewCaret)
   }*/
 
   m_dwCaret = dwNewCaret;
-  int scrolldy=0;
-	if(!DrawCaret(&scrolldy)) {
+  //INT64 scrolldy=0;
+	if(!DrawCaret(NULL/*&scrolldy*/)) {
     ScrollBy(0, dy, !m_bBlock);
-    scrolldy += dy;
+    //scrolldy += dy;
   }
   
   /*if(dwOldCaret >= dwOrg)

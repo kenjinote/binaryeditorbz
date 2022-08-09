@@ -104,6 +104,8 @@ public:
 		T* pT = static_cast<T*>(this);
 		ATLASSERT(::IsWindow(pT->m_hWnd));
 
+    if(pty>m_u64VMax)pty = m_u64VMax;
+
     if(pty!=m_u64V)
     {
       pT->DoScroll(SB_VERT, SB_UPDATEFROMPARAM, (int&)m_ptOffset.y, m_sizeAll.cy, m_sizePage.cy, m_sizeLine.cy, &pty);
@@ -124,7 +126,7 @@ public:
     }
   }
 
-	void ScrollBy(int dx, int dy, BOOL bScrl = TRUE)
+	void ScrollBy(int dx, INT64 dy, BOOL bScrl = TRUE)
   {
 		T* pT = static_cast<T*>(this);
 		ATLASSERT(::IsWindow(pT->m_hWnd));

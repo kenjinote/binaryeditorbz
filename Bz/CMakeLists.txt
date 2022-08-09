@@ -38,10 +38,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 target_link_libraries(Bz imagehlp.lib Winspool.lib)
 
 if(CMAKE_CL_64)
-  target_link_libraries(Bz ${CMAKE_SOURCE_DIR}/zlib128_64.lib)
+  target_link_libraries(Bz ${CMAKE_SOURCE_DIR}/zlib1212_64.lib)
   set_target_properties(Bz PROPERTIES OUTPUT_NAME "Bz64")
 else()
-  target_link_libraries(Bz ${CMAKE_SOURCE_DIR}/zlib128.lib)
+  target_link_libraries(Bz ${CMAKE_SOURCE_DIR}/zlib1212.lib)
 endif()
 
 

@@ -111,10 +111,17 @@ void CMainFrame::OnFileSaveDumpList(UINT uNotifyCode, int nID, CWindow wndCtl)
     if(SUCCEEDED(file.Create(dlg.m_szFileName, GENERIC_WRITE, 0, CREATE_ALWAYS)))
     {
       CBZView *pBZView = GetActiveBZView();
-      if(pBZView)pBZView->DrawToFile(&file);
+      if(pBZView)
+      {
+        pBZView->DrawToFile(&file);
+        pBZView->Invalidate();
+        CBZView *pBroBZView = GetBrotherView(pBZView);
+        if(pBroBZView)pBroBZView->Invalidate();
+      }
       file.Close();
     }
   }
+  
 }
 void CMainFrame::OnFileNew(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
@@ -438,6 +445,7 @@ void CMainFrame::_OnViewSplit(int nID)
 
   SwitchActiveBZView();
   ResetWindowWidth();
+  options.lastSplitView = m_nSplitView==ID_VIEW_SPLIT_H ? 0:1;
 }
 
 LRESULT CMainFrame::OnStatusBarClicked(LPNMHDR pnmh)

@@ -146,6 +146,7 @@ public:
 
     bMiniToolbar = GetProfileInt(key, _T("MiniToolbar"), TRUE);
     lastPalletName = GetProfileString(key, _T("lastPalletName"));
+    lastSplitView = GetProfileInt(key, _T("LastSplitView"), 0);
 
     CheckOptions();
    // key.Flush();
@@ -201,6 +202,7 @@ public:
     bAddressTooltip = TRUE;
 
     bMiniToolbar = TRUE;
+    lastSplitView = 0;
   }
 
   void CheckOptions()
@@ -227,7 +229,7 @@ public:
   HRESULT WriteFileInt(CAtlFile &file, LPCSTR name, int val)
   {
     CStringA str;
-    str.Format("%s = %ld\n", name, val);
+    str.Format("%s = %ld\r\n", name, val);
     return file.Write(((LPVOID)(LPCSTR)(str)), str.GetLength());
   }
 
@@ -238,14 +240,22 @@ public:
     t.Replace(_T("\r"), _T("\\r"));
     t.Replace(_T("\n"), _T("\\n"));
     CStringA str;
-    str.Format("%s = \"%s\"\n", name, CT2A(val, CP_UTF8));
+    //str.Format("%s = \"%s\"\n", name, CT2A(val, CP_UTF8)); //64ビット版だけ文字化けするので禁止。UTF8が化ける。32ビット版は問題無い
+    str.Format("%s = \"", name);
+    HRESULT hr = file.Write(((LPVOID)(LPCSTR)(str)), str.GetLength());
+    if(FAILED(hr))return hr;
+    CT2A u8str(t, CP_UTF8);
+    int lenU8str = lstrlenA((LPSTR)u8str);
+    hr = file.Write(((LPVOID)(LPSTR)(u8str)), lenU8str);
+    if(FAILED(hr))return hr;
+    str = "\"\r\n";
     return file.Write(((LPVOID)(LPCSTR)(str)), str.GetLength());
   }
 
   HRESULT WriteFileRect(CAtlFile &file, LPCSTR name, LPRECT val)
   {
     CStringA str;
-    str.Format("%s = {%d, %d, %d, %d}\n", name, val->left, val->top, val->right, val->bottom);
+    str.Format("%s = {%d, %d, %d, %d}\r\n", name, val->left, val->top, val->right, val->bottom);
     return file.Write(((LPVOID)(LPCSTR)(str)), str.GetLength());
   }
 
@@ -263,7 +273,7 @@ public:
         str += t;
       }
     }
-    str += "}\n";
+    str += "}\r\n";
     return file.Write(((LPVOID)(LPCSTR)(str)), str.GetLength());
   }
 
@@ -281,7 +291,7 @@ public:
         str += t;
       }
     }
-    str += "}\n";
+    str += "}\r\n";
     return file.Write(((LPVOID)(LPCSTR)(str)), str.GetLength());
   }
 
@@ -298,7 +308,7 @@ public:
     CAtlFile file;
     if(FAILED(file.Create(path, GENERIC_WRITE, 0, CREATE_ALWAYS)))return E_FAIL;
 
-    CStringA t = CW2A(_T("/* このファイルがあるとポータブルモードになります。設定はこのファイルへ書きだされます。レジストリには書き込まれません。 */\n\n"), CP_UTF8);
+    CStringA t = CW2A(_T("/* このファイルがあるとポータブルモードになります。設定はこのファイルへ書きだされます。レジストリには書き込まれません。 */\r\n\r\n"), CP_UTF8);
     file.Write( ((LPCVOID)(LPCSTR)t), t.GetLength());
     
     WriteFileInt(file, "PortableVersion", 1);
@@ -368,6 +378,7 @@ public:
 
     WriteFileInt(file, "MiniToolbar", bMiniToolbar);
     WriteFileString(file, "lastPalletName", lastPalletName);
+    WriteFileInt(file, "LastSplitView", lastSplitView);
 
 
     file.Flush();
@@ -445,6 +456,7 @@ public:
 
     WriteProfileInt(key, _T("MiniToolbar"), bMiniToolbar);
     WriteProfileString(key, _T("lastPalletName"), lastPalletName);
+    WriteProfileInt(key, _T("LastSplitView"), lastSplitView);
 
     key.Flush();
   }
@@ -501,6 +513,8 @@ public:
   BOOL bMiniToolbar;
 
   CString lastPalletName;
+
+  int lastSplitView;
 
 public:
   CBZOptions() : m_bModified(FALSE), bPortableMode(FALSE) { }

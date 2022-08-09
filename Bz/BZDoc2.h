@@ -149,6 +149,7 @@ public:
   BOOL CloseDocument(HWND hWnd = NULL);
 private:
   void DeleteContents(BOOL bRecreateSFC = TRUE);
+  BOOL AskSave(HWND hWnd);
 
 public:
   BOOL OnFileOpen(LPCTSTR lpszPathName = NULL, HWND hWnd = NULL);

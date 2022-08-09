@@ -2,6 +2,8 @@
 	cmos.h
 *************************************************/
 
+#pragma once
+
 #define INVALID -1
 
 #ifndef _RECT_EX

@@ -253,7 +253,7 @@ public:
       {
         HDITEM col = { 0 };
         col.mask = HDI_FORMAT | HDI_TEXT | HDI_WIDTH;
-        col.fmt = HDF_LEFT;
+        col.fmt = HDF_LEFT | HDF_STRING;
         col.cxy = 250;
         col.pszText = MEMBER_LABELS_STR[i];
         col.cxy = options.colWidth2[i];

@@ -1,0 +1,55 @@
+version: 0.0.0.{build}
+build: off
+image:
+- Visual Studio 2013
+environment:
+ matrix:
+  - msvc: '"Visual Studio 12 2013"'
+platform:
+ - x64
+init:
+- ps: Set-WinSystemLocale ja-JP
+- ps: Start-Sleep -s 5
+- ps: Restart-Computer
+build_script:
+- cd Bz
+- 7z x WTL91_5321_Final.zip -o"WTL91_5321_Final" > NUL
+- dos2unix atlscrl.h.patch
+- cd WTL91_5321_Final
+- dos2unix include\atlscrl.h
+- patch -p1 -l --binary < ..\atlscrl.h.915321.patch
+- unix2dos include\atlscrl.h
+- cd ..
+- appveyor DownloadFile https://zlib.net/zlib1212.zip
+- 7z x zlib1212.zip > NUL
+- cd zlib-1.2.12
+- md build
+- cd build
+- cmake -G "Visual Studio 12 2013" -DBUILD_SHARED_LIBS=OFF -DCMAKE_GENERATOR_TOOLSET=v120_xp -D CMAKE_C_FLAGS_RELEASE:STRING="/MT /Os /GF /GL" ..
+- cmake --build . --config Release
+- copy zconf.h ..
+- cd ..
+- cd ..
+- md build
+- cd build
+- cmake -G "Visual Studio 12 2013"  -DCMAKE_GENERATOR_TOOLSET=v120_xp -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%\Bz\zlib-1.2.12\build\Release\zlibstatic.lib -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%\Bz\zlib-1.2.12 -DBUILD_SHARED_LIBS=OFF  -D CMAKE_CXX_FLAGS_RELEASE:STRING="/MT /Os /GF /GL /I\"%APPVEYOR_BUILD_FOLDER%\Bz\WTL91_5321_Final\Include\"" ..
+- cmake --build . --config Release
+- cd ..
+- cd zlib-1.2.12
+- md build64
+- cd build64
+- cmake -G "Visual Studio 12 2013 Win64" -DBUILD_SHARED_LIBS=OFF -DCMAKE_GENERATOR_TOOLSET=v120_xp -D CMAKE_C_FLAGS_RELEASE:STRING="/MT /Os /GF /GL" ..
+- cmake --build . --config Release
+- copy /Y zconf.h ..
+- cd ..
+- cd ..
+- md build64
+- cd build64
+- cmake -G "Visual Studio 12 2013 Win64"  -DCMAKE_GENERATOR_TOOLSET=v120_xp -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%\Bz\zlib-1.2.12\build64\Release\zlibstatic.lib -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%\Bz\zlib-1.2.12 -DBUILD_SHARED_LIBS=OFF  -D CMAKE_CXX_FLAGS_RELEASE:STRING="/MT /Os /GF /GL /I\"%APPVEYOR_BUILD_FOLDER%\Bz\WTL91_5321_Final\Include\"" ..
+- cmake --build . --config Release
+- cd ..
+- cd nsis
+- makensis.exe /X"SetCompressor /SOLID lzma" /X"OutFile BzTest.exe" setupTest.nsi
+artifacts:
+- path: 'Bz\NSIS\BzTest.exe'
+  name: installer

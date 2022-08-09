@@ -1,7 +1,7 @@
-diff -Naur wtl81_12085/Include/atlscrl.h wtl81_12085p/Include/atlscrl.h
---- wtl81_12085/Include/atlscrl.h	2012-02-05 16:42:30.000000000 +0900
-+++ wtl81_12085p/Include/atlscrl.h	2018-06-08 00:45:10.237388100 +0900
-@@ -590,7 +590,7 @@
+diff -Naru WTL91_5321_Final/Include/atlscrl.h WTL91_5321_Finalp/Include/atlscrl.h
+--- WTL91_5321_Final/Include/atlscrl.h	2015-11-17 03:58:38.000000000 +0900
++++ WTL91_5321_Finalp/Include/atlscrl.h	2018-06-09 01:24:45.937462900 +0900
+@@ -702,7 +702,7 @@
  		if(pT->AdjustScrollOffset(x, y))
  		{
  			// Children will be moved in SetScrollOffset, if needed
@@ -9,4 +9,4 @@ diff -Naur wtl81_12085/Include/atlscrl.h wtl81_12085p/Include/atlscrl.h
 +			pT->ScrollWindowEx(-(m_ptOffset.x - x), -(m_ptOffset.y - y), (m_uScrollFlags & ~SCRL_SCROLLCHILDREN));
  			SetScrollOffset(x, y, FALSE);
  		}
- 
+ 	}
